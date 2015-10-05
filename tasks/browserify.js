@@ -7,6 +7,7 @@ var Elixir = require('laravel-elixir');
 var browserify = require('browserify');
 var partialify = require('partialify');
 var source = require('vinyl-source-stream');
+var sourcemaps = require('gulp-sourcemaps');
 
 var bundle;
 var $ = Elixir.Plugins;
@@ -45,7 +46,9 @@ Elixir.extend('browserify', function(src, output, baseDir, options) {
                 })
                 .pipe(source(paths.output.name))
                 .pipe(buffer())
+                .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe($.if(config.production, $.uglify()))
+                .pipe(sourcemaps.write('./'))
                 .pipe(gulp.dest(paths.output.baseDir))
                 .pipe(new Elixir.Notification('Browserify Compiled!'))
             );
